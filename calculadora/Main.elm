@@ -11,9 +11,9 @@ import String
 
 
 type alias Model =
-    { resultado : Int
-    , valor1 : Int
-    , valor2 : Int
+    { resultado : Float
+    , valor1 : Float
+    , valor2 : Float
     , error : Maybe String
     }
 
@@ -35,6 +35,7 @@ type Msg
     = Adicao
     | Subtracao
     | Multiplicacao
+    | Divisao
     | Valor1 String
     | Valor2 String
     | Clear
@@ -45,27 +46,38 @@ update msg model =
     case msg of
         Adicao ->
             { model
-                | resultado = model.valor1 + model.valor2
-                , valor1 = 0
-                , valor2 = 0
+                | resultado =
+                    model.valor1 + model.valor2
+                    --, valor1 = 0
+                    --, valor2 = 0
             }
 
         Subtracao ->
             { model
-                | resultado = model.valor1 - model.valor2
-                , valor1 = 0
-                , valor2 = 0
+                | resultado =
+                    model.valor1 - model.valor2
+                    --, valor1 = 0
+                    --, valor2 = 0
             }
 
         Multiplicacao ->
             { model
-                | resultado = model.valor1 - model.valor2
-                , valor1 = 0
-                , valor2 = 0
+                | resultado =
+                    model.valor1 * model.valor2
+                    --, valor1 = 0
+                    --, valor2 = 0
+            }
+
+        Divisao ->
+            { model
+                | resultado =
+                    model.valor1 / model.valor2
+                    --, valor1 = 0
+                    --, valor2 = 0
             }
 
         Valor1 val ->
-            case String.toInt val of
+            case String.toFloat val of
                 Ok input ->
                     { model
                         | valor1 = input
@@ -79,7 +91,7 @@ update msg model =
                     }
 
         Valor2 val ->
-            case String.toInt val of
+            case String.toFloat val of
                 Ok input ->
                     { model
                         | valor2 = input
@@ -139,12 +151,22 @@ view model =
             [ type' "button"
             , onClick Adicao
             ]
-            [ text "Add" ]
+            [ text "Adição" ]
         , button
             [ type' "button"
             , onClick Subtracao
             ]
             [ text "Subtração" ]
+        , button
+            [ type' "button"
+            , onClick Multiplicacao
+            ]
+            [ text "Multiplicação" ]
+        , button
+            [ type' "button"
+            , onClick Divisao
+            ]
+            [ text "Divisão" ]
         , button
             [ type' "button"
             , onClick Clear
