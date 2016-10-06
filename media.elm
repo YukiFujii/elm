@@ -22,7 +22,7 @@ type alias Model =
 
 initModel : Model
 initModel =
-    { resultado = 0
+    { resultado = -1
     , notas = []
     , nota = -1
     , qtd = 0
@@ -38,7 +38,9 @@ initModel =
 type Msg
     = Nota String
     | Adicionar
+    | Calcular
     | Situacao
+    | Limpar
 
 
 update : Msg -> Model -> Model
@@ -69,16 +71,33 @@ update msg model =
                     , qtd = model.qtd + 1
                 }
 
-        Situacao ->
+        Calcular ->
             { model
                 | resultado = (List.sum model.notas) / model.qtd
+                , notas = []
+                , nota = -1
+                , qtd = 0
             }
+
+        Situacao ->
+            if model.resultado >= 5 then
+                { model
+                    | situacao = "Aprovado"
+                }
+            else
+                { model
+                    | situacao = "Reprovado"
+                }
+
+        Limpar ->
+            initModel
 
 
 view : Model -> Html Msg
 view model =
     div []
-        [ div []
+        [ cabecalho model
+        , div []
             [ text "Insira uma nota: "
             , input
                 [ type' "text"
@@ -93,13 +112,44 @@ view model =
                 []
             , button
                 [ type' "button"
-                , onClick Situacao
                 , onFocus Adicionar
                 ]
                 [ text "Adicionar" ]
             ]
+        , div [] [ h3 [] [] ]
         , div []
-            [ text ("Quantidade de notas inseridas: " ++ (toString model.resultado)) ]
+            [ button
+                [ type' "button"
+                , onFocus Calcular
+                , onClick Situacao
+                ]
+                [ text "Calcular" ]
+            , button
+                [ type' "button"
+                , onClick Limpar
+                ]
+                [ text "Limpar" ]
+            ]
+        , div [] [ h3 [] [] ]
+        , div []
+            [ text
+                ("Média final: "
+                    ++ (if model.resultado == -1 then
+                            ""
+                        else
+                            (toString model.resultado)
+                       )
+                )
+            ]
+        , div []
+            [ text ("Situacao: " ++ model.situacao) ]
+        ]
+
+
+cabecalho : Model -> Html Msg
+cabecalho model =
+    div []
+        [ h3 [] [ text "Programa de calculo de média e situação do aluno!" ]
         ]
 
 
