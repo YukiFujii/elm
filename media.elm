@@ -14,7 +14,7 @@ type alias Model =
     { resultado : Float
     , notas : List Float
     , nota : Float
-    , qtd : Int
+    , qtd : Float
     , situacao : String
     , error : Maybe String
     }
@@ -38,6 +38,7 @@ initModel =
 type Msg
     = Nota String
     | Adicionar
+    | Situacao
 
 
 update : Msg -> Model -> Model
@@ -68,6 +69,11 @@ update msg model =
                     , qtd = model.qtd + 1
                 }
 
+        Situacao ->
+            { model
+                | resultado = (List.sum model.notas) / model.qtd
+            }
+
 
 view : Model -> Html Msg
 view model =
@@ -87,12 +93,13 @@ view model =
                 []
             , button
                 [ type' "button"
-                , onClick Adicionar
+                , onClick Situacao
+                , onFocus Adicionar
                 ]
                 [ text "Adicionar" ]
             ]
         , div []
-            [ text ("Quantidade de notas inseridas: " ++ (toString model.qtd)) ]
+            [ text ("Quantidade de notas inseridas: " ++ (toString model.resultado)) ]
         ]
 
 
